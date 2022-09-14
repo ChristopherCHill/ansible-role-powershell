@@ -1,0 +1,26 @@
+---
+- name: Update packagemanager cache.
+  apt:
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Ensure certain package dependencies are met.
+  package:
+    name:
+      - wget
+      - apt-transport-https
+      - software-properties-common
+    state: present
+
+#- name: Determine if PowerShell installed
+#  command: dpkg-query -W 
+
+- name: Download PowerShell deb package.
+  get_url:
+    url: https://packages.microsoft.com/config/ubuntu/{{ ansible_distribution_version }}/{{ powershell_deb_filename }}
+    dest: /tmp/packages-microsoft-prod.deb
+    mode: '0644'
+
+- name: Install PowerShell
+  apt: deb="{{ powershell_deb_filename }}"
+  #when: powershell_installed.rc=0
