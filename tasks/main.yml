@@ -15,12 +15,27 @@
 #- name: Determine if PowerShell installed
 #  command: dpkg-query -W 
 
-- name: Download PowerShell deb package.
-  get_url:
-    url: https://packages.microsoft.com/config/ubuntu/{{ ansible_distribution_version }}/{{ powershell_deb_filename }}
-    dest: /tmp/packages-microsoft-prod.deb
-    mode: '0644'
+#- name: Download PowerShell deb package.
+  #get_url:
+    #url: https://packages.microsoft.com/config/ubuntu/{{ ansible_distribution_version }}/{{ powershell_deb_filename }}
+    #dest: /tmp/packages-microsoft-prod.deb
+    #mode: '0644'
 
-- name: Install PowerShell
-  apt: deb="{{ powershell_deb_filename }}"
+- name: Ensure apt repo is available.
+  apt_repository:
+    repo: deb [arch=amd64,arm64,armhf] https://packages.microsoft.com/ubuntu/{{ ansible_distribution_version }}/prod {{ ansible_distribution_release}} main
+  when: ansible_os_family == "Debian"
+
+#- name: Install PowerShell repo.
+  #apt: 
+    #deb: /tmp/{{ powershell_deb_filename }}
   #when: powershell_installed.rc=0
+
+#- name: Update packagemanager cache again.
+  #apt:
+    #update_cache: yes
+  #when: ansible_os_family == "Debian"
+
+#- name: Install PowerShell.
+  #package:
+    #name: powershell
